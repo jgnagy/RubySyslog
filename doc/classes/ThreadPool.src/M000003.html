@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (ThreadPool)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/threadpool.rb, line 21</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">size</span>)
+    <span class="ruby-ivar">@work</span> = <span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@group</span> = <span class="ruby-constant">ThreadGroup</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@shutdown</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-ivar">@size</span> = <span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">size</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-ivar">@group</span>.<span class="ruby-identifier">add</span>(<span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>)
+        <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">stop</span>
+        <span class="ruby-identifier">loop</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@shutdown</span>
+            <span class="ruby-comment cmt">#puts &quot;#{Thread.current} stopping&quot;;</span>
+            <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">current</span>.<span class="ruby-identifier">terminate</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">job</span> = <span class="ruby-ivar">@work</span>.<span class="ruby-identifier">pop</span> <span class="ruby-comment cmt"># threads wait here for a job</span>
+          <span class="ruby-identifier">args</span>, <span class="ruby-identifier">block</span> = <span class="ruby-operator">*</span><span class="ruby-identifier">job</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">StandardError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+            <span class="ruby-identifier">bt</span> = <span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+            <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Error in thread (please catch this): #{e.inspect}\n#{bt}&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">pass</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-ivar">@group</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">w</span><span class="ruby-operator">|</span> <span class="ruby-identifier">w</span>.<span class="ruby-identifier">run</span> }
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,13 @@
+:db:
+    adapter: mysql
+    database: syslog_development
+    username: root
+    #password:
+    host: localhost
+    pool: 15
+    timeout: 5000
+:protocol: both
+:port: 9514
+:process_threads: 20
+:storage_threads: 10   # should be 1 for sqlite3
+:verbose: true

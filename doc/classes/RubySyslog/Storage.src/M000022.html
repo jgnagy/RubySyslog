@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_models (RubySyslog::Storage)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File storage.rb, line 38</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_models</span>
+                <span class="ruby-comment cmt"># creates an array of all the model files in the models directory</span>
+                <span class="ruby-comment cmt">#  the regex removes items that don't end in &quot;.rb&quot;</span>
+                <span class="ruby-identifier">models</span> = <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;models/&quot;</span>).<span class="ruby-identifier">entries</span>.<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">delete_if</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ext</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span>(<span class="ruby-identifier">ext</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/.rb$/</span>) }
+      
+                <span class="ruby-comment cmt"># load the models</span>
+                <span class="ruby-identifier">models</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">model</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">require</span> <span class="ruby-node">&quot;models/#{model}&quot;</span>
+                        <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@verbose</span>
+                                <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Loaded Model: #{model}&quot;</span>
+                        <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># if debug</span>
+                        <span class="ruby-ivar">@loaded_models</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">model</span>
+                <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># models.each</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

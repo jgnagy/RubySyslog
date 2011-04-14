@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (RubySyslog::Server)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File server.rb, line 23</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">config</span> = <span class="ruby-constant">DEFAULT_SERVER_CONFIG</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+                <span class="ruby-ivar">@parser</span> = <span class="ruby-constant">Parser</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">config</span>)
+                <span class="ruby-ivar">@storage</span> = <span class="ruby-constant">Storage</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">config</span>)
+                <span class="ruby-ivar">@storage</span>.<span class="ruby-identifier">connect</span>
+                <span class="ruby-ivar">@storage</span>.<span class="ruby-identifier">load_models</span>
+                
+                <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Storage loaded            [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">config</span>
+                <span class="ruby-ivar">@log_queue</span> = <span class="ruby-constant">LogQueue</span>.<span class="ruby-identifier">new</span>
+                <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Log Queue loaded          [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                <span class="ruby-ivar">@process_pool</span> = <span class="ruby-constant">ThreadPool</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">config</span>[<span class="ruby-identifier">:process_threads</span>])
+                <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Process Pool [#{@process_pool.size}] loaded  [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                <span class="ruby-ivar">@storage_pool</span> = <span class="ruby-constant">ThreadPool</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">config</span>[<span class="ruby-identifier">:storage_threads</span>])
+                <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Storage Pool [#{@storage_pool.size}] loaded   [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                <span class="ruby-ivar">@mutex</span> = <span class="ruby-constant">LogMutex</span>.<span class="ruby-identifier">new</span>
+                <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Log Mutex loaded          [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                
+                <span class="ruby-ivar">@queue_flushed</span> = <span class="ruby-keyword kw">true</span>
+                
+                <span class="ruby-identifier">listen_for_udp</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:protocol</span>].<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/^([bB]oth|UDP|udp)$/</span>)
+                
+                <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;Server loaded             [  OK  ]&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-identifier">:verbose</span>]
+                <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">config</span>[<span class="ruby-identifier">:port</span>], <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:protocol</span>].<span class="ruby-identifier">match</span>(<span class="ruby-regexp re">/^([bB]oth|TCP|tcp)$/</span>)
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

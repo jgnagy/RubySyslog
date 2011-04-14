@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>process_logs (RubySyslog::Server)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File server.rb, line 84</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process_logs</span>
+                <span class="ruby-keyword kw">until</span> <span class="ruby-ivar">@log_queue</span>.<span class="ruby-identifier">empty?</span>
+                        <span class="ruby-ivar">@queue_flushed</span> = <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@queue_flushed</span>
+                        <span class="ruby-identifier">log</span> = <span class="ruby-identifier">pop_log</span>
+                        <span class="ruby-ivar">@process_pool</span>.<span class="ruby-identifier">add_job</span> {
+                                <span class="ruby-comment cmt">#puts &quot;Processing Log: #{log.object_id.to_s(16)}&quot;</span>
+                                <span class="ruby-identifier">parsed_log</span> = <span class="ruby-ivar">@parser</span>.<span class="ruby-identifier">parse</span> <span class="ruby-identifier">log</span>
+                                <span class="ruby-ivar">@storage_pool</span>.<span class="ruby-identifier">add_job</span> {<span class="ruby-ivar">@storage</span>.<span class="ruby-identifier">store_log</span> <span class="ruby-identifier">parsed_log</span>}
+                        }
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@queue_flushed</span>
+                        <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Log Queue Flush Complete @ #{Time.now}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:verbose</span>] <span class="ruby-keyword kw">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">logs_queued?</span>
+                        <span class="ruby-ivar">@queue_flushed</span> = <span class="ruby-keyword kw">true</span>
+                <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
